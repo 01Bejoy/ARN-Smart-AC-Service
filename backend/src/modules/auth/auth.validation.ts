@@ -6,9 +6,10 @@ export const registerSchema = z.object({
   phone: z.string(),
   password: z.string().min(6),
   role: z.enum(["CUSTOMER", "TECHNICIAN", "ADMIN"]),
-});
 
-export const loginSchema = z.object({
-  email: z.email(),
-  password: z.string(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+
+  experience: z.number().optional(),
+  specialty: z.string().optional(),
 });

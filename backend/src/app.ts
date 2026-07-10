@@ -4,7 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import routes from "./routes";
-
+import { globalErrorHandler } from "./errors/globalErrorHandler";
 const app = express();
 
 // Middlewares
@@ -25,5 +25,7 @@ app.get("/", (req, res) => {
     message: "ARN Smart AC Service API Running Successfully 🚀",
   });
 });
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;

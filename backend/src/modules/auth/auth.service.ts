@@ -14,8 +14,37 @@ export const registerUser = async (data: any) => {
     },
   });
 
+  if (user.role === "CUSTOMER") {
+    await prisma.customer.create({
+      data: {
+        userId: user.id,
+        address: data.address || "",
+        city: data.city || "",
+      },
+    });
+  }
+
+  if (user.role === "TECHNICIAN") {
+    await prisma.technician.create({
+      data: {
+        userId: user.id,
+        experience: data.experience || 0,
+        specialty: data.specialty || "",
+      },
+    });
+  }
+
+  if (user.role === "ADMIN") {
+    await prisma.admin.create({
+      data: {
+        userId: user.id,
+      },
+    });
+  }
+
   return user;
 };
+
 export const findUserByEmail = async (email: string) => {
   return prisma.user.findUnique({
     where: { email },

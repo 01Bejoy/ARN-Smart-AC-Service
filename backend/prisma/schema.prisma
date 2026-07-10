@@ -12,6 +12,31 @@ enum Role {
   TECHNICIAN
   ADMIN
 }
+enum BookingStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Payment {
+  id            String         @id @default(cuid())
+  bookingId     String         @unique
+  amount        Float
+  paymentMethod String
+  paymentStatus PaymentStatus  @default(PENDING)
+  transactionId String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+}
 
 model User {
   id        String   @id @default(cuid())
@@ -30,25 +55,29 @@ model User {
 }
 
 model Customer {
-  id        String @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId    String @unique
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  address   String
-  city      String
+  address String
+  city String
+
+  bookings Booking[]
 
   createdAt DateTime @default(now())
 }
 
 model Technician {
-  id         String @id @default(cuid())
+  id String @id @default(cuid())
 
-  userId     String @unique
-  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   experience Int
-  specialty  String
+  specialty String
+
+  bookings Booking[]
 
   createdAt DateTime @default(now())
 }
@@ -60,4 +89,46 @@ model Admin {
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+model Review {
+  id           String   @id @default(cuid())
+
+  bookingId    String   @unique
+  customerId   String
+
+  rating       Int
+  comment      String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  booking  Booking  @relation(fields: [bookingId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id String @id @default(cuid())
+
+  customerId String
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  technicianId String?
+  technician Technician? @relation(fields: [technicianId], references: [id])
+
+  serviceType String
+  acBrand String
+  acModel String?
+
+  problemDescription String
+
+  preferredDate DateTime
+
+  bookingStatus BookingStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment Payment?
+  review Review?
 }

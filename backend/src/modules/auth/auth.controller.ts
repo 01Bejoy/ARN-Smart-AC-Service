@@ -2,9 +2,13 @@ import { Request, Response } from "express";
 import { registerSchema } from "./auth.validation";
 import { registerUser } from "./auth.service";
 import bcrypt from "bcrypt";
-import { loginSchema } from "./auth.validation";
 import { findUserByEmail } from "./auth.service";
 import { generateToken } from "../../utils/jwt";
+
+const loginSchema = registerSchema.pick({
+  email: true,
+  password: true,
+});
 
 export const register = async (req: Request, res: Response) => {
   try {
